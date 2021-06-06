@@ -1,0 +1,21 @@
+[
+  {
+    "roomId": 123,
+    "gameStatus": "start-progress",
+    "players": [
+      {
+        "playerId": 33,
+        "name": "ravashna",
+        "hue": 20,
+        "playerPosition": 3
+      },
+      {
+        "playerId": 35,
+        "name": "ram",
+        "hue": 40,
+        "playerPosition": 4
+      }
+    ],
+    "currentTurn": 33
+  }
+]

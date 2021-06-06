@@ -1,0 +1,13 @@
+{
+  "name": "snake_and_ladder_backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "venkybavisetti <bavisetti.venkatesh@thoughtworks.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
