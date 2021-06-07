@@ -144,7 +144,6 @@ const dice = (req, res) => {
   if (room.players.every((player) => player.playerPosition === 100))
     room.gameStatus = 'completed';
   if (dice !== 6) {
-    console.log(dice);
     const index = room.players.findIndex(
       (player) => player.playerId === playerId
     );

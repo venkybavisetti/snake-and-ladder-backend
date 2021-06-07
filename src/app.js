@@ -23,19 +23,14 @@ app.use(express.json());
 app.use((...args) => app.get('sessionMiddleware')(...args));
 app.use(express.static('build'));
 
+app.get('/api/roomId', getRoomId);
+app.get('/api/playerColors', getPlayerColors);
+app.get('/api/boardData', boardData);
+
 app.post('/api/createRoom', createRoom);
 app.post('/api/joinRoom', joinRoom);
 app.post('/api/join', join);
 app.post('/api/start', start);
 app.post('/api/dice', dice);
-
-app.get('/api/roomId', getRoomId);
-app.get('/api/playerColors', getPlayerColors);
-app.get('/api/boardData', boardData);
-
-app.get('/api', (req, res) => {
-  console.log(JSON.stringify(req.app.locals.db));
-  res.json({ status: 'good' });
-});
 
 module.exports = { app };
