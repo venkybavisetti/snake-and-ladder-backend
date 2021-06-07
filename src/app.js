@@ -1,14 +1,41 @@
 const express = require('express');
+const morgan = require('morgan');
+const session = require('cookie-session');
+const {
+  createRoom,
+  getRoomId,
+  getPlayerColors,
+  joinRoom,
+  join,
+  boardData,
+  start,
+  dice,
+} = require('./handlers');
 
 const app = express();
 
-const db = [];
+app.locals.db = [];
 
-app.get('/board-roll', (req, res) => {
-  console.log('hiii', req);
-  db.push(1);
+app.set('sessionMiddleware', session({ secret: 'snakeAndLader' }));
 
-  res.json({ hii: db, msg: '6' });
+app.use(morgan('dev'));
+app.use(express.json());
+app.use((...args) => app.get('sessionMiddleware')(...args));
+app.use(express.static('build'));
+
+app.post('/api/createRoom', createRoom);
+app.post('/api/joinRoom', joinRoom);
+app.post('/api/join', join);
+app.post('/api/start', start);
+app.post('/api/dice', dice);
+
+app.get('/api/roomId', getRoomId);
+app.get('/api/playerColors', getPlayerColors);
+app.get('/api/boardData', boardData);
+
+app.get('/api', (req, res) => {
+  console.log(JSON.stringify(req.app.locals.db));
+  res.json({ status: 'good' });
 });
 
 module.exports = { app };

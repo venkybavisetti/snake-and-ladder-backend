@@ -16,6 +16,8 @@
         "playerPosition": 4
       }
     ],
-    "currentTurn": 33
+    "currentTurn": 33,
+    "lastDiceValue": 3,
+    "hostId": 33
   }
 ]

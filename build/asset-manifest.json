@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.fa8c87cc.chunk.css",
+    "main.js": "/static/js/main.3bb7521f.chunk.js",
+    "main.js.map": "/static/js/main.3bb7521f.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.58dca444.js",
+    "runtime-main.js.map": "/static/js/runtime-main.58dca444.js.map",
+    "static/css/2.0542f091.chunk.css": "/static/css/2.0542f091.chunk.css",
+    "static/js/2.513af1ff.chunk.js": "/static/js/2.513af1ff.chunk.js",
+    "static/js/2.513af1ff.chunk.js.map": "/static/js/2.513af1ff.chunk.js.map",
+    "static/js/3.ab779361.chunk.js": "/static/js/3.ab779361.chunk.js",
+    "static/js/3.ab779361.chunk.js.map": "/static/js/3.ab779361.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.0542f091.chunk.css.map": "/static/css/2.0542f091.chunk.css.map",
+    "static/css/main.fa8c87cc.chunk.css.map": "/static/css/main.fa8c87cc.chunk.css.map",
+    "static/js/2.513af1ff.chunk.js.LICENSE.txt": "/static/js/2.513af1ff.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/static/media/playersWallet.d5960098.png",
+    "static/media/gamePlayer.fa360d51.png": "/static/media/gamePlayer.fa360d51.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.58dca444.js",
+    "static/css/2.0542f091.chunk.css",
+    "static/js/2.513af1ff.chunk.js",
+    "static/css/main.fa8c87cc.chunk.css",
+    "static/js/main.3bb7521f.chunk.js"
+  ]
+}
