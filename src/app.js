@@ -10,6 +10,7 @@ const {
   boardData,
   start,
   dice,
+  checkAuthentication,
 } = require('./handlers');
 
 const app = express();
@@ -25,11 +26,13 @@ app.use(express.static('build'));
 
 app.get('/api/roomId', getRoomId);
 app.get('/api/playerColors', getPlayerColors);
-app.get('/api/boardData', boardData);
-
 app.post('/api/createRoom', createRoom);
 app.post('/api/joinRoom', joinRoom);
 app.post('/api/join', join);
+
+app.use(checkAuthentication);
+app.get('/api/boardData', boardData);
+
 app.post('/api/start', start);
 app.post('/api/dice', dice);
 

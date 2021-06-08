@@ -70,6 +70,12 @@ const join = (req, res) => {
   const room = getRoom(req.app.locals.db, req.session.roomId);
   const { playerName, hueValue } = req.body;
 
+  if (room.gameStatus !== 'start') {
+    res.status(403);
+    res.json({ message: 'game has been started' });
+    return;
+  }
+
   if (isColorExists(room.players, hueValue)) {
     return res.json({
       status: false,
@@ -111,6 +117,7 @@ const getGameStatus = (req) => {
   const isHost = room.hostId === playerId;
   const gameStatus = room.gameStatus;
   const currentPlayer = getPlayer(room.players, room.currentTurn).name;
+  const currentPlayerHue = getPlayer(room.players, room.currentTurn).hue;
   return {
     players,
     turn,
@@ -118,6 +125,7 @@ const getGameStatus = (req) => {
     gameStatus,
     dice: room.lastDiceValue,
     currentPlayer,
+    currentPlayerHue,
   };
 };
 
@@ -131,27 +139,41 @@ const start = (req, res) => {
   res.json(getGameStatus(req));
 };
 
+const getNextPlayer = (players, currentPlayerId) => {
+  const index = players.findIndex(
+    (player) => player.playerId === currentPlayerId
+  );
+  return [...players.slice(index + 1), ...players.slice(0, index)].find(
+    (player) => player.playerPosition < 100
+  );
+};
+
 const dice = (req, res) => {
   const { dice } = req.body;
   const { roomId, playerId } = req.session;
   const room = getRoom(req.app.locals.db, roomId);
   const player = getPlayer(room.players, playerId);
+  const nextPlayer = getNextPlayer(room.players, playerId);
 
   if (player.playerPosition + dice <= 100)
     player.playerPosition =
       snakeAndLaderPositions[player.playerPosition + dice] ||
       player.playerPosition + dice;
-  if (room.players.every((player) => player.playerPosition === 100))
-    room.gameStatus = 'completed';
-  if (dice !== 6) {
-    const index = room.players.findIndex(
-      (player) => player.playerId === playerId
-    );
-    room.currentTurn = room.players[(index + 1) % room.players.length].playerId;
-  }
-  room.lastDiceValue = dice;
+  if (nextPlayer === undefined) room.gameStatus = 'completed';
+  if (dice !== 6 && nextPlayer !== undefined)
+    room.currentTurn = nextPlayer.playerId;
 
+  room.lastDiceValue = dice;
   res.json(getGameStatus(req));
+};
+
+const checkAuthentication = (req, res, next) => {
+  const { isNew, roomId, playerId } = req.session;
+  if (!isNew && roomId && playerId) {
+    return next();
+  }
+  res.status(403);
+  res.json({ message: 'unauthorize resource' });
 };
 
 module.exports = {
@@ -163,4 +185,5 @@ module.exports = {
   boardData,
   start,
   dice,
+  checkAuthentication,
 };
