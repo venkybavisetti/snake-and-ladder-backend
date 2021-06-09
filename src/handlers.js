@@ -3,6 +3,7 @@ const snakeAndLaderPositions = {
   4: 14,
   9: 31,
   16: 6,
+  21: 42,
   28: 84,
   36: 44,
   47: 26,
@@ -20,10 +21,18 @@ const snakeAndLaderPositions = {
 };
 
 const isColorExists = (players, color) =>
-  players.some((player) => player.hue === color);
+  players.some(
+    (player) =>
+      player.player &&
+      player.player.playerNum === color.playerNum &&
+      player.player.hue === color.hue
+  );
 
 const getRemainingPlayerColors = (room) => {
-  const allColors = Array.from({ length: 20 }, (_, index) => (index + 1) * 18);
+  const allColors = Array.from({ length: 20 }, (_, index) => ({
+    playerNum: Math.ceil((index + 1) / 4),
+    hue: 90 * ((index + 1) % 4),
+  }));
   return allColors.filter((color) => !isColorExists(room.players, color));
 };
 
@@ -47,6 +56,7 @@ const createRoom = (req, res) => {
     currentTurn: 1,
     hostId: 1,
     lastDiceValue: 0,
+    winners: [],
   });
   res.json({ status: true });
 };
@@ -68,7 +78,7 @@ const getPlayerColors = (req, res) => {
 
 const join = (req, res) => {
   const room = getRoom(req.app.locals.db, req.session.roomId);
-  const { playerName, hueValue } = req.body;
+  const { playerName, player } = req.body;
 
   if (room.gameStatus !== 'start') {
     res.status(403);
@@ -76,7 +86,7 @@ const join = (req, res) => {
     return;
   }
 
-  if (isColorExists(room.players, hueValue)) {
+  if (isColorExists(room.players, player)) {
     return res.json({
       status: false,
       data: getRemainingPlayerColors(
@@ -88,7 +98,7 @@ const join = (req, res) => {
   if (req.session.playerId === 1) {
     const host = getPlayer(room.players, 1);
     host.name = playerName;
-    host.hue = hueValue;
+    host.player = player;
     return res.json({ status: true });
   }
 
@@ -98,7 +108,7 @@ const join = (req, res) => {
     playerId,
     playerPosition: 0,
     name: playerName,
-    hue: hueValue,
+    player: player,
   });
   res.json({ status: true });
 };
@@ -116,8 +126,7 @@ const getGameStatus = (req) => {
   const turn = getPlayer(room.players, playerId).playerId === room.currentTurn;
   const isHost = room.hostId === playerId;
   const gameStatus = room.gameStatus;
-  const currentPlayer = getPlayer(room.players, room.currentTurn).name;
-  const currentPlayerHue = getPlayer(room.players, room.currentTurn).hue;
+  const currentPlayer = getPlayer(room.players, room.currentTurn);
   return {
     players,
     turn,
@@ -125,7 +134,7 @@ const getGameStatus = (req) => {
     gameStatus,
     dice: room.lastDiceValue,
     currentPlayer,
-    currentPlayerHue,
+    winners: room.winners,
   };
 };
 
@@ -139,10 +148,12 @@ const start = (req, res) => {
   res.json(getGameStatus(req));
 };
 
+const getPlayerIndex = (players, playerId) =>
+  players.findIndex((player) => player.playerId === playerId);
+
 const getNextPlayer = (players, currentPlayerId) => {
-  const index = players.findIndex(
-    (player) => player.playerId === currentPlayerId
-  );
+  const index = getPlayerIndex(players, currentPlayerId);
+
   return [...players.slice(index + 1), ...players.slice(0, index)].find(
     (player) => player.playerPosition < 100
   );
@@ -159,9 +170,12 @@ const dice = (req, res) => {
     player.playerPosition =
       snakeAndLaderPositions[player.playerPosition + dice] ||
       player.playerPosition + dice;
-  if (nextPlayer === undefined) room.gameStatus = 'completed';
-  if (dice !== 6 && nextPlayer !== undefined)
+  if ((dice !== 6 && nextPlayer !== undefined) || player.playerPosition === 100)
     room.currentTurn = nextPlayer.playerId;
+  if (player.playerPosition === 100)
+    room.winners.push(getPlayerIndex(room.players, player.playerId));
+  if (room.players.length === room.winners.length + 1)
+    room.gameStatus = 'completed';
 
   room.lastDiceValue = dice;
   res.json(getGameStatus(req));
@@ -169,7 +183,12 @@ const dice = (req, res) => {
 
 const checkAuthentication = (req, res, next) => {
   const { isNew, roomId, playerId } = req.session;
-  if (!isNew && roomId && playerId) {
+  if (
+    !isNew &&
+    roomId &&
+    playerId &&
+    req.app.locals.db.some((room) => room.roomId === roomId)
+  ) {
     return next();
   }
   res.status(403);

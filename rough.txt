@@ -1,0 +1,4 @@
+1. winners based on winning order --done--
+2. color range increasing
+5. css
+4. If we can have a time gap between players to roll the dice.

@@ -1,0 +1,40 @@
+[
+  {
+    "roomId": 123,
+    "gameStatus": "start-progress",
+    "players": [
+      {
+        "playerId": 33,
+        "name": "ravashna",
+        "hue": 20,
+        "player": {
+          "playerNum": 1,
+          "hue": 90
+        },
+        "playerPosition": 100
+      },
+      {
+        "playerId": 35,
+        "name": "ram",
+        "hue": 40,
+        "playerPosition": 4
+      },
+      {
+        "playerId": 35,
+        "name": "ram",
+        "hue": 40,
+        "playerPosition": 100
+      },
+      {
+        "playerId": 35,
+        "name": "ram",
+        "hue": 40,
+        "playerPosition": 100
+      }
+    ],
+    "currentTurn": 33,
+    "lastDiceValue": 3,
+    "hostId": 33,
+    "winners": []
+  }
+]
