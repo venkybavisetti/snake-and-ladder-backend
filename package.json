@@ -5,11 +5,12 @@
   "author": "venkybavisetti <bavisetti.venkatesh@thoughtworks.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "dependencies": {
     "cookie-session": "^1.4.0",
     "express": "^4.17.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.7"
   }
 }

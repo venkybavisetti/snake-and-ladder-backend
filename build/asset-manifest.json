@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.ad64f1d7.chunk.css",
-    "main.js": "/static/js/main.ea43337f.chunk.js",
-    "main.js.map": "/static/js/main.ea43337f.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.7f60769d.js",
-    "runtime-main.js.map": "/static/js/runtime-main.7f60769d.js.map",
+    "main.css": "/static/css/main.69433f2c.chunk.css",
+    "main.js": "/static/js/main.9b24a819.chunk.js",
+    "main.js.map": "/static/js/main.9b24a819.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.c7b67770.js",
+    "runtime-main.js.map": "/static/js/runtime-main.c7b67770.js.map",
     "static/css/2.0542f091.chunk.css": "/static/css/2.0542f091.chunk.css",
-    "static/js/2.6dcc8340.chunk.js": "/static/js/2.6dcc8340.chunk.js",
-    "static/js/2.6dcc8340.chunk.js.map": "/static/js/2.6dcc8340.chunk.js.map",
-    "static/js/3.9a02fe0c.chunk.js": "/static/js/3.9a02fe0c.chunk.js",
-    "static/js/3.9a02fe0c.chunk.js.map": "/static/js/3.9a02fe0c.chunk.js.map",
+    "static/js/2.243d3627.chunk.js": "/static/js/2.243d3627.chunk.js",
+    "static/js/2.243d3627.chunk.js.map": "/static/js/2.243d3627.chunk.js.map",
+    "static/js/3.1af526af.chunk.js": "/static/js/3.1af526af.chunk.js",
+    "static/js/3.1af526af.chunk.js.map": "/static/js/3.1af526af.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.0542f091.chunk.css.map": "/static/css/2.0542f091.chunk.css.map",
-    "static/css/main.ad64f1d7.chunk.css.map": "/static/css/main.ad64f1d7.chunk.css.map",
-    "static/js/2.6dcc8340.chunk.js.LICENSE.txt": "/static/js/2.6dcc8340.chunk.js.LICENSE.txt",
+    "static/css/main.69433f2c.chunk.css.map": "/static/css/main.69433f2c.chunk.css.map",
+    "static/js/2.243d3627.chunk.js.LICENSE.txt": "/static/js/2.243d3627.chunk.js.LICENSE.txt",
     "static/media/blue-player.de8eb60e.png": "/static/media/blue-player.de8eb60e.png",
     "static/media/App.css": "/static/media/playersWallet.d5960098.png",
     "static/media/green-player.6a26f254.png": "/static/media/green-player.6a26f254.png",
@@ -22,10 +22,10 @@
     "static/media/yellow-player.17512bfc.png": "/static/media/yellow-player.17512bfc.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.7f60769d.js",
+    "static/js/runtime-main.c7b67770.js",
     "static/css/2.0542f091.chunk.css",
-    "static/js/2.6dcc8340.chunk.js",
-    "static/css/main.ad64f1d7.chunk.css",
-    "static/js/main.ea43337f.chunk.js"
+    "static/js/2.243d3627.chunk.js",
+    "static/css/main.69433f2c.chunk.css",
+    "static/js/main.9b24a819.chunk.js"
   ]
 }
