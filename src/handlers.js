@@ -135,6 +135,7 @@ const getGameStatus = (req) => {
     dice: room.lastDiceValue,
     currentPlayer,
     winners: room.winners,
+    hostId: room.hostId,
   };
 };
 
@@ -183,16 +184,51 @@ const dice = (req, res) => {
 
 const checkAuthentication = (req, res, next) => {
   const { isNew, roomId, playerId } = req.session;
-  if (
-    !isNew &&
-    roomId &&
-    playerId &&
-    req.app.locals.db.some((room) => room.roomId === roomId)
-  ) {
+  const room = getRoom(req.app.locals.db, roomId);
+
+  if (!isNew && room && getPlayer(room.players, playerId)) {
     return next();
   }
+
+  req.session = null;
   res.status(403);
   res.json({ message: 'unauthorize resource' });
+};
+
+const removePlayer = (req, res) => {
+  const { removePlayerId } = req.body;
+  const { roomId } = req.session;
+  const room = getRoom(req.app.locals.db, roomId);
+  const removePlayerIndex = room.players.findIndex(
+    (player) => player.playerId === removePlayerId
+  );
+
+  room.players = room.players.filter(
+    (player) => player.playerId !== removePlayerId
+  );
+
+  room.winners = room.winners.filter(
+    (playerIndex) => playerIndex !== removePlayerIndex
+  );
+
+  if (room.currentTurn === removePlayerId) {
+    room.currentTurn = getNextPlayer(room.players, removePlayerId).playerId;
+  }
+
+  if (room.players.length === room.winners.length + 1)
+    room.gameStatus = 'completed';
+
+  res.json(getGameStatus(req));
+};
+
+const changeHost = (req, res) => {
+  const { changeHost } = req.body;
+  const { roomId } = req.session;
+
+  const room = getRoom(req.app.locals.db, roomId);
+  room.hostId = changeHost;
+
+  res.json(getGameStatus(req));
 };
 
 module.exports = {
@@ -205,4 +241,6 @@ module.exports = {
   start,
   dice,
   checkAuthentication,
+  removePlayer,
+  changeHost,
 };
