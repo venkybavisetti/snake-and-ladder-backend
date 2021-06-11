@@ -99,6 +99,7 @@ const join = (req, res) => {
     const host = getPlayer(room.players, 1);
     host.name = playerName;
     host.player = player;
+    host.notifications = [];
     return res.json({ status: true });
   }
 
@@ -109,6 +110,7 @@ const join = (req, res) => {
     playerPosition: 0,
     name: playerName,
     player: player,
+    notifications: [],
   });
   res.json({ status: true });
 };
@@ -127,6 +129,8 @@ const getGameStatus = (req) => {
   const isHost = room.hostId === playerId;
   const gameStatus = room.gameStatus;
   const currentPlayer = getPlayer(room.players, room.currentTurn);
+  const notification = getPlayer(players, playerId).notifications.shift();
+
   return {
     players,
     turn,
@@ -136,6 +140,7 @@ const getGameStatus = (req) => {
     currentPlayer,
     winners: room.winners,
     hostId: room.hostId,
+    notification,
   };
 };
 
@@ -146,6 +151,12 @@ const boardData = (req, res) => {
 const start = (req, res) => {
   const room = getRoom(req.app.locals.db, req.session.roomId);
   room.gameStatus = 'progress';
+
+  insertNotification(room.players, {
+    message: `Host Started the Game`,
+    severity: 'success',
+  });
+
   res.json(getGameStatus(req));
 };
 
@@ -167,16 +178,48 @@ const dice = (req, res) => {
   const player = getPlayer(room.players, playerId);
   const nextPlayer = getNextPlayer(room.players, playerId);
 
-  if (player.playerPosition + dice <= 100)
+  if (player.playerPosition + dice <= 100) {
+    if (
+      [1, 4, 9, 21, 28, 36, 51, 71, 80].some(
+        (ladder) => ladder === player.playerPosition + dice
+      )
+    ) {
+      insertNotification(room.players, {
+        message: `${player.name} clammed the Ladder🎉🕺💃`,
+        severity: 'success',
+      });
+    }
+    if (
+      [16, 47, 49, 62, 64, 56, 87, 93, 95, 98].some(
+        (ladder) => ladder === player.playerPosition + dice
+      )
+    ) {
+      insertNotification(room.players, {
+        message: `${player.name} injured with Snake bit🐍😤`,
+        severity: 'error',
+      });
+    }
     player.playerPosition =
       snakeAndLaderPositions[player.playerPosition + dice] ||
       player.playerPosition + dice;
+  }
   if ((dice !== 6 && nextPlayer !== undefined) || player.playerPosition === 100)
     room.currentTurn = nextPlayer.playerId;
-  if (player.playerPosition === 100)
+  if (player.playerPosition === 100) {
     room.winners.push(getPlayerIndex(room.players, player.playerId));
+    insertNotification(room.players, {
+      message: `${player.name} Winner Winner Chicken Dinner🍗🐓🎉`,
+      severity: 'success',
+    });
+  }
   if (room.players.length === room.winners.length + 1)
     room.gameStatus = 'completed';
+
+  if (dice === 6)
+    insertNotification(room.players, {
+      message: `${player.name} got one more chance🎉🍾`,
+      severity: 'success',
+    });
 
   room.lastDiceValue = dice;
   res.json(getGameStatus(req));
@@ -193,6 +236,12 @@ const checkAuthentication = (req, res, next) => {
   req.session = null;
   res.status(403);
   res.json({ message: 'unauthorize resource' });
+};
+
+const insertNotification = (players, notification) => {
+  players.forEach((player) => {
+    player.notifications.push(notification);
+  });
 };
 
 const removePlayer = (req, res) => {
@@ -218,6 +267,11 @@ const removePlayer = (req, res) => {
   if (room.players.length === room.winners.length + 1)
     room.gameStatus = 'completed';
 
+  insertNotification(room.players, {
+    message: `Host Removed ${getPlayer(room.players, removePlayerId).name}`,
+    severity: 'error',
+  });
+
   res.json(getGameStatus(req));
 };
 
@@ -227,6 +281,11 @@ const changeHost = (req, res) => {
 
   const room = getRoom(req.app.locals.db, roomId);
   room.hostId = changeHost;
+
+  insertNotification(room.players, {
+    message: `Host changed to ${getPlayer(room.players, changeHost).name}`,
+    severity: 'success',
+  });
 
   res.json(getGameStatus(req));
 };
