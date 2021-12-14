@@ -172,7 +172,9 @@ const getNextPlayer = (players, currentPlayerId) => {
 };
 
 const dice = (req, res) => {
-  const { dice } = req.body;
+  let dice = Math.floor(Math.random() * 7);
+  dice = dice < 1 ? 1 : dice;
+  dice = dice > 6 ? 6 : dice;
   const { roomId, playerId } = req.session;
   const room = getRoom(req.app.locals.db, roomId);
   const player = getPlayer(room.players, playerId);
@@ -236,6 +238,18 @@ const checkAuthentication = (req, res, next) => {
   req.session = null;
   res.status(403);
   res.json({ message: 'unauthorize resource' });
+};
+
+const checkPlayerTurn = (req, res, next) => {
+  const { isNew, roomId, playerId } = req.session;
+  const room = getRoom(req.app.locals.db, roomId);
+  const player = getPlayer(room.players, playerId);
+  if (!isNew && room && player && player.playerId === room.currentTurn) {
+    return next();
+  }
+
+  res.status(403);
+  res.json({ message: 'plzz play fair game' });
 };
 
 const insertNotification = (players, notification) => {
@@ -302,4 +316,5 @@ module.exports = {
   checkAuthentication,
   removePlayer,
   changeHost,
+  checkPlayerTurn,
 };

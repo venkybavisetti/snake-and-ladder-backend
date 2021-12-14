@@ -13,6 +13,7 @@ const {
   checkAuthentication,
   removePlayer,
   changeHost,
+  checkPlayerTurn
 } = require('./handlers');
 
 const app = express();
@@ -36,8 +37,10 @@ app.use(checkAuthentication);
 app.get('/api/boardData', boardData);
 
 app.post('/api/start', start);
-app.post('/api/dice', dice);
 app.post('/api/removePlayer', removePlayer);
 app.post('/api/changeHost', changeHost);
+
+app.use(checkPlayerTurn);
+app.get('/api/dice', dice);
 
 module.exports = { app };
